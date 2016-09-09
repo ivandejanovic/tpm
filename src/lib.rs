@@ -7,7 +7,7 @@ use std::env::Args;
 use std::fs::File;
 
 use self::compiler::cpl;
-use self::vm::vm;
+use self::vm::Vm;
 
 const MINUS: &'static str = "-";
 const VERSION_FLAG_SHORT: &'static str = "-v";
@@ -72,4 +72,10 @@ fn handle_flags(args: Args) -> bool {
 
 fn invalid_usage_msg() {
     println!("{}", INVALID_USAGE_MESSAGE)
+}
+
+fn vm(code: Vec<String>) {
+    let vm = *Vm::new();
+    vm.load_code(code);
+    vm.execute();
 }
