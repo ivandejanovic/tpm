@@ -21,6 +21,54 @@
 // SOFTWARE.
 
 
-pub fn fetch_msg1() -> String {
-    "Message 1".to_string()
+pub struct Instructions {
+    pub halt: &'static str,
+    pub in_n: &'static str,
+    pub out_n: &'static str,
+    pub in_s: &'static str,
+    pub out_s: &'static str,
+    pub add: &'static str,
+    pub sub: &'static str,
+    pub mul: &'static str,
+    pub div: &'static str,
+    pub con: &'static str,
+    pub push: &'static str,
+    pub pop: &'static str,
+    pub ldm: &'static str,
+    pub stm: &'static str,
+    pub lds: &'static str,
+    pub sts: &'static str,
+    pub jmp: &'static str,
+    pub jgr: &'static str,
+    pub jge: &'static str,
+    pub jeq: &'static str,
+    pub jne: &'static str,
+    pub jle: &'static str,
+    pub jls: &'static str,
 }
+
+pub const INSTRUCTIONS: Instructions = Instructions {
+    halt: "HALT",
+    in_n: "IN_N",
+    out_n: "OUT_N",
+    in_s: "IN_S",
+    out_s: "OUT_S",
+    add: "ADD",
+    sub: "SUB",
+    mul: "MUL",
+    div: "DIV",
+    con: "CON",
+    push: "PUSH",
+    pop: "POP",
+    ldm: "LDS",
+    stm: "STS",
+    lds: "LDM",
+    sts: "STM",
+    jmp: "JMP",
+    jgr: "JGR",
+    jge: "JGE",
+    jeq: "JEQ",
+    jne: "JNE",
+    jle: "JLE",
+    jls: "JLS",
+};

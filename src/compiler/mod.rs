@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 
-use common::fetch_msg1;
 use std::fs::File;
 use std::io::*;
 
@@ -37,6 +36,5 @@ pub fn cpl(mut codefile: File) -> Vec<String> {
 
 fn compile(code: String) -> Vec<String> {
     println!("{}", code);
-    println!("{}", fetch_msg1());
     Vec::new()
 }

@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+use common::INSTRUCTIONS;
 
 pub struct Vm {
 
@@ -32,6 +33,7 @@ impl Vm {
 
     pub fn load_code(&self, code: Vec<String>) {
         println!("{}", code.len());
+        println!("{}", INSTRUCTIONS.halt);
     }
 
     pub fn execute(&self) {}
