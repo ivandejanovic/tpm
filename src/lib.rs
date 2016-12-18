@@ -71,7 +71,6 @@ pub fn tpm() {
         }
         None => invalid_usage_msg(),
     }
-
 }
 
 fn handle_flags(args: Args) -> bool {
