@@ -24,28 +24,31 @@ use std::collections::HashMap;
 
 use common::INSTRUCTIONS;
 
+// Bit Masks
+const INST_MASK: u64 = 0xFF;
+
 // Opcodes
-const HALT: i64 = 0x00;
-const IN_N: i64 = 0x01;
-const OUT_N: i64 = 0x02;
-const IN_S: i64 = 0x03;
-const OUT_S: i64 = 0x04;
-const ADD: i64 = 0x05;
-const SUB: i64 = 0x06;
-const MUL: i64 = 0x07;
-const DIV: i64 = 0x08;
-const CON: i64 = 0x09;
-const PUSH: i64 = 0x0A;
-const POP: i64 = 0x0B;
-const LD: i64 = 0x0C;
-const ST: i64 = 0x0D;
-const JMP: i64 = 0x0E;
-const JGR: i64 = 0x0F;
-const JGE: i64 = 0x10;
-const JEQ: i64 = 0x11;
-const JNE: i64 = 0x12;
-const JLE: i64 = 0x13;
-const JLS: i64 = 0x14;
+const HALT: u64 = 0x00;
+const IN_N: u64 = 0x01;
+const OUT_N: u64 = 0x02;
+const IN_S: u64 = 0x03;
+const OUT_S: u64 = 0x04;
+const ADD: u64 = 0x05;
+const SUB: u64 = 0x06;
+const MUL: u64 = 0x07;
+const DIV: u64 = 0x08;
+const CON: u64 = 0x09;
+const PUSH: u64 = 0x0A;
+const POP: u64 = 0x0B;
+const LD: u64 = 0x0C;
+const ST: u64 = 0x0D;
+const JMP: u64 = 0x0E;
+const JGR: u64 = 0x0F;
+const JGE: u64 = 0x10;
+const JEQ: u64 = 0x11;
+const JNE: u64 = 0x12;
+const JLE: u64 = 0x13;
+const JLS: u64 = 0x14;
 
 const REG_NUM: usize = 8;
 const INS_MEM_CAP: usize = 50000;
@@ -53,9 +56,9 @@ const INS_MEM_CAP: usize = 50000;
 pub struct Vm {
     pc: usize,
     sp: usize,
-    acc: i64,
-    reg: [i64; REG_NUM],
-    ins_mem: [i64; INS_MEM_CAP],
+    acc: u64,
+    reg: [u64; REG_NUM],
+    ins_mem: [u64; INS_MEM_CAP],
 }
 
 impl Vm {
@@ -72,7 +75,7 @@ impl Vm {
     pub fn load_code(&self, code: Vec<String>) {
         println!("{}", code.len());
 
-        let mut opcode_map: HashMap<&'static str, i64> = HashMap::new();
+        let mut opcode_map: HashMap<&'static str, u64> = HashMap::new();
 
         opcode_map.insert(INSTRUCTIONS.halt, HALT);
         opcode_map.insert(INSTRUCTIONS.in_n, IN_N);
@@ -104,8 +107,9 @@ impl Vm {
     pub fn execute(&self) {
         loop {
             let inst = self.ins_mem[self.pc];
+            let opcode = (inst.rotate_left(8) & INST_MASK);
 
-            match inst {
+            match opcode {
                 HALT => break,
                 IN_N => self.process_in_n(),
                 OUT_N => self.process_out_n(),
