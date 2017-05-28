@@ -20,7 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+use std::io::stdin;
 use std::collections::HashMap;
+use std::mem::transmute;
 
 use common::INSTRUCTIONS;
 
@@ -54,7 +56,7 @@ const REG_NUM: usize = 8;
 const INS_MEM_CAP: usize = 50000;
 
 pub struct Vm {
-    pc: usize,
+    ip: usize,
     sp: usize,
     acc: u64,
     reg: [u64; REG_NUM],
@@ -64,15 +66,15 @@ pub struct Vm {
 impl Vm {
     pub fn new() -> Box<Vm> {
         Box::new(Vm {
-            pc: 0,
-            sp: 0,
-            acc: 0,
-            reg: [0; REG_NUM],
-            ins_mem: [0; INS_MEM_CAP],
-        })
+                     ip: 0,
+                     sp: 0,
+                     acc: 0,
+                     reg: [0; REG_NUM],
+                     ins_mem: [0; INS_MEM_CAP],
+                 })
     }
 
-    pub fn load_code(&self, code: Vec<String>) {
+    pub fn load_code(&mut self, code: Vec<String>) {
         println!("{}", code.len());
 
         let mut opcode_map: HashMap<&'static str, u64> = HashMap::new();
@@ -104,10 +106,10 @@ impl Vm {
         }
     }
 
-    pub fn execute(&self) {
+    pub fn execute(&mut self) {
         loop {
-            let inst = self.ins_mem[self.pc];
-            let opcode = (inst.rotate_left(8) & INST_MASK);
+            let inst = self.ins_mem[self.ip];
+            let opcode = inst.rotate_left(8) & INST_MASK;
 
             match opcode {
                 HALT => break,
@@ -135,47 +137,77 @@ impl Vm {
                     println!("Unknow instruction. Aborting.");
                     break;
                 }
+
+            }
+
+            if self.has_errors() {
+                self.throw_exception();
+                break;
             }
         }
     }
 
-    fn process_in_n(&self) {}
+    fn process_in_n(&mut self) {
+        let mut input_text = String::new();
+        stdin().read_line(&mut input_text).expect("failed to read from stdin");
 
-    fn process_out_n(&self) {}
+        let trimmed = input_text.trim();
+        match trimmed.parse::<f64>() {
+            Ok(i) => {
+                self.acc = unsafe { transmute::<f64, u64>(i) };
+                self.ip = self.ip + 1;
+            }
+            Err(..) => self.set_io_error_flag(),
+        };
+    }
 
-    fn process_in_s(&self) {}
+    fn process_out_n(&mut self) {}
 
-    fn process_out_s(&self) {}
+    fn process_in_s(&mut self) {}
 
-    fn process_add(&self) {}
+    fn process_out_s(&mut self) {}
 
-    fn process_sub(&self) {}
+    fn process_add(&mut self) {}
 
-    fn process_mul(&self) {}
+    fn process_sub(&mut self) {}
 
-    fn process_div(&self) {}
+    fn process_mul(&mut self) {}
 
-    fn process_con(&self) {}
+    fn process_div(&mut self) {}
 
-    fn process_push(&self) {}
+    fn process_con(&mut self) {}
 
-    fn process_pop(&self) {}
+    fn process_push(&mut self) {}
 
-    fn process_ld(&self) {}
+    fn process_pop(&mut self) {}
 
-    fn process_st(&self) {}
+    fn process_ld(&mut self) {}
 
-    fn process_jmp(&self) {}
+    fn process_st(&mut self) {}
 
-    fn process_jgr(&self) {}
+    fn process_jmp(&mut self) {}
 
-    fn process_jge(&self) {}
+    fn process_jgr(&mut self) {}
 
-    fn process_jeq(&self) {}
+    fn process_jge(&mut self) {}
 
-    fn process_jne(&self) {}
+    fn process_jeq(&mut self) {}
 
-    fn process_jle(&self) {}
+    fn process_jne(&mut self) {}
 
-    fn process_jls(&self) {}
+    fn process_jle(&mut self) {}
+
+    fn process_jls(&mut self) {}
+
+    fn set_io_error_flag(&mut self) {
+        println!("IO error flag set!")
+    }
+
+    fn has_errors(&mut self) -> bool {
+        false
+    }
+
+    fn throw_exception(&mut self) {
+        println!("Exception thrown!")
+    }
 }

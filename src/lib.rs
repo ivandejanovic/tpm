@@ -97,7 +97,7 @@ fn invalid_usage_msg() {
 }
 
 fn vm(code: Vec<String>) {
-    let vm = *Vm::new();
+    let mut vm = *Vm::new();
     vm.load_code(code);
     vm.execute();
 }
