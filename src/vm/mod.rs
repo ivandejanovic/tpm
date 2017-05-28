@@ -161,7 +161,10 @@ impl Vm {
         };
     }
 
-    fn process_out_n(&mut self) {}
+    fn process_out_n(&mut self) {
+        let output = unsafe { transmute::<u64, f64>(self.acc) };
+        println!("{}", output)
+    }
 
     fn process_in_s(&mut self) {}
 
