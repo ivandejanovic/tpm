@@ -28,6 +28,7 @@ use common::INSTRUCTIONS;
 
 // Bit Masks
 const INST_MASK: u64 = 0xFF;
+const REG_MASK: u64 = 0xF;
 
 // Opcodes
 const HALT: u64 = 0x00;
@@ -149,7 +150,9 @@ impl Vm {
 
     fn process_in_n(&mut self) {
         let mut input_text = String::new();
-        stdin().read_line(&mut input_text).expect("failed to read from stdin");
+        stdin()
+            .read_line(&mut input_text)
+            .expect("failed to read from stdin");
 
         let trimmed = input_text.trim();
         match trimmed.parse::<f64>() {
@@ -163,20 +166,69 @@ impl Vm {
 
     fn process_out_n(&mut self) {
         let output = unsafe { transmute::<u64, f64>(self.acc) };
-        println!("{}", output)
+        println!("{}", output);
+        self.ip = self.ip + 1;
     }
 
     fn process_in_s(&mut self) {}
 
     fn process_out_s(&mut self) {}
 
-    fn process_add(&mut self) {}
+    fn process_add(&mut self) {
+        let inst = self.ins_mem[self.ip];
+        let operand1Reg = (inst.rotate_left(15) & REG_MASK) as usize;
+        let operand2Reg = (inst.rotate_left(18) & REG_MASK) as usize;
 
-    fn process_sub(&mut self) {}
+        let operand1 = unsafe { transmute::<u64, f64>(self.reg[operand1Reg]) };
+        let operand2 = unsafe { transmute::<u64, f64>(self.reg[operand2Reg]) };
 
-    fn process_mul(&mut self) {}
+        let result = operand1 + operand2;
 
-    fn process_div(&mut self) {}
+        self.acc = unsafe { transmute::<f64, u64>(result) };
+        self.ip = self.ip + 1;
+    }
+
+    fn process_sub(&mut self) {
+        let inst = self.ins_mem[self.ip];
+        let operand1Reg = (inst.rotate_left(15) & REG_MASK) as usize;
+        let operand2Reg = (inst.rotate_left(18) & REG_MASK) as usize;
+
+        let operand1 = unsafe { transmute::<u64, f64>(self.reg[operand1Reg]) };
+        let operand2 = unsafe { transmute::<u64, f64>(self.reg[operand2Reg]) };
+
+        let result = operand1 - operand2;
+
+        self.acc = unsafe { transmute::<f64, u64>(result) };
+        self.ip = self.ip + 1;
+    }
+
+    fn process_mul(&mut self) {
+        let inst = self.ins_mem[self.ip];
+        let operand1Reg = (inst.rotate_left(15) & REG_MASK) as usize;
+        let operand2Reg = (inst.rotate_left(18) & REG_MASK) as usize;
+
+        let operand1 = unsafe { transmute::<u64, f64>(self.reg[operand1Reg]) };
+        let operand2 = unsafe { transmute::<u64, f64>(self.reg[operand2Reg]) };
+
+        let result = operand1 * operand2;
+
+        self.acc = unsafe { transmute::<f64, u64>(result) };
+        self.ip = self.ip + 1;
+    }
+
+    fn process_div(&mut self) {
+        let inst = self.ins_mem[self.ip];
+        let operand1Reg = (inst.rotate_left(15) & REG_MASK) as usize;
+        let operand2Reg = (inst.rotate_left(18) & REG_MASK) as usize;
+
+        let operand1 = unsafe { transmute::<u64, f64>(self.reg[operand1Reg]) };
+        let operand2 = unsafe { transmute::<u64, f64>(self.reg[operand2Reg]) };
+
+        let result = operand1 / operand2;
+
+        self.acc = unsafe { transmute::<f64, u64>(result) };
+        self.ip = self.ip + 1;
+    }
 
     fn process_con(&mut self) {}
 
