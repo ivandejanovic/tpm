@@ -29,6 +29,13 @@ use common::INSTRUCTIONS;
 // Bit Masks
 const INST_MASK: u64 = 0xFF;
 const REG_MASK: u64 = 0xF;
+const FULL_REG_MASK: u64 = 0x1F;
+
+//Rotation values
+const INST_ROTATION: u32 = 8;
+const OPERAND_ONE_ROTATION: u32 = 12;
+const OPERANT_TWO_ROTATION: u32 = 15;
+const FULL_REG_ROTATION: u32 = 13;
 
 // Opcodes
 const HALT: u64 = 0x00;
@@ -110,7 +117,7 @@ impl Vm {
     pub fn execute(&mut self) {
         loop {
             let inst = self.ins_mem[self.ip];
-            let opcode = inst.rotate_left(8) & INST_MASK;
+            let opcode = inst.rotate_left(INST_ROTATION) & INST_MASK;
 
             match opcode {
                 HALT => break,
@@ -175,12 +182,8 @@ impl Vm {
     fn process_out_s(&mut self) {}
 
     fn process_add(&mut self) {
-        let inst = self.ins_mem[self.ip];
-        let operand1Reg = (inst.rotate_left(15) & REG_MASK) as usize;
-        let operand2Reg = (inst.rotate_left(18) & REG_MASK) as usize;
-
-        let operand1 = unsafe { transmute::<u64, f64>(self.reg[operand1Reg]) };
-        let operand2 = unsafe { transmute::<u64, f64>(self.reg[operand2Reg]) };
+        let operand1 = self.get_operand(OPERAND_ONE_ROTATION);
+        let operand2 = self.get_operand(OPERANT_TWO_ROTATION);
 
         let result = operand1 + operand2;
 
@@ -189,12 +192,8 @@ impl Vm {
     }
 
     fn process_sub(&mut self) {
-        let inst = self.ins_mem[self.ip];
-        let operand1Reg = (inst.rotate_left(15) & REG_MASK) as usize;
-        let operand2Reg = (inst.rotate_left(18) & REG_MASK) as usize;
-
-        let operand1 = unsafe { transmute::<u64, f64>(self.reg[operand1Reg]) };
-        let operand2 = unsafe { transmute::<u64, f64>(self.reg[operand2Reg]) };
+        let operand1 = self.get_operand(OPERAND_ONE_ROTATION);
+        let operand2 = self.get_operand(OPERANT_TWO_ROTATION);
 
         let result = operand1 - operand2;
 
@@ -203,12 +202,8 @@ impl Vm {
     }
 
     fn process_mul(&mut self) {
-        let inst = self.ins_mem[self.ip];
-        let operand1Reg = (inst.rotate_left(15) & REG_MASK) as usize;
-        let operand2Reg = (inst.rotate_left(18) & REG_MASK) as usize;
-
-        let operand1 = unsafe { transmute::<u64, f64>(self.reg[operand1Reg]) };
-        let operand2 = unsafe { transmute::<u64, f64>(self.reg[operand2Reg]) };
+        let operand1 = self.get_operand(OPERAND_ONE_ROTATION);
+        let operand2 = self.get_operand(OPERANT_TWO_ROTATION);
 
         let result = operand1 * operand2;
 
@@ -217,12 +212,8 @@ impl Vm {
     }
 
     fn process_div(&mut self) {
-        let inst = self.ins_mem[self.ip];
-        let operand1Reg = (inst.rotate_left(15) & REG_MASK) as usize;
-        let operand2Reg = (inst.rotate_left(18) & REG_MASK) as usize;
-
-        let operand1 = unsafe { transmute::<u64, f64>(self.reg[operand1Reg]) };
-        let operand2 = unsafe { transmute::<u64, f64>(self.reg[operand2Reg]) };
+        let operand1 = self.get_operand(OPERAND_ONE_ROTATION);
+        let operand2 = self.get_operand(OPERANT_TWO_ROTATION);
 
         let result = operand1 / operand2;
 
@@ -232,13 +223,36 @@ impl Vm {
 
     fn process_con(&mut self) {}
 
-    fn process_push(&mut self) {}
+    fn process_push(&mut self) {
+        let reg_index = self.get_register_index();
 
-    fn process_pop(&mut self) {}
+        // register push
+        if reg_index <= 7 {
+            let value = self.reg[reg_index];
 
-    fn process_ld(&mut self) {}
+            // ip push
+        } else if reg_index == 8 {
+            // sp push
+        } else if reg_index == 9 {
+            // acc push
+        } else if reg_index == 10 {
+            // error
+        } else {
 
-    fn process_st(&mut self) {}
+        }
+    }
+
+    fn process_pop(&mut self) {
+        let reg_index = self.get_register_index();
+    }
+
+    fn process_ld(&mut self) {
+        let reg_index = self.get_register_index();
+    }
+
+    fn process_st(&mut self) {
+        let reg_index = self.get_register_index();
+    }
 
     fn process_jmp(&mut self) {}
 
@@ -264,5 +278,19 @@ impl Vm {
 
     fn throw_exception(&mut self) {
         println!("Exception thrown!")
+    }
+
+    fn get_operand(&mut self, rotation: u32) -> f64 {
+        let inst = self.ins_mem[self.ip];
+        let operand_reg = (inst.rotate_left(rotation) & REG_MASK) as usize;
+
+        unsafe { transmute::<u64, f64>(self.reg[operand_reg]) }
+    }
+
+    fn get_register_index(&mut self) -> usize {
+        let inst = self.ins_mem[self.ip];
+        let reg_index = (inst.rotate_left(FULL_REG_ROTATION) & FULL_REG_MASK) as usize;
+
+        reg_index
     }
 }
