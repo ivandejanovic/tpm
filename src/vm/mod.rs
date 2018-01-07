@@ -37,6 +37,11 @@ const OPERAND_ONE_ROTATION: u32 = 12;
 const OPERANT_TWO_ROTATION: u32 = 15;
 const FULL_REG_ROTATION: u32 = 13;
 
+//Register index
+const IP_INDEX: usize = 8;
+const SP_INDEX: usize = 9;
+const ACC_INDEX: usize = 10;
+
 // Opcodes
 const HALT: u64 = 0x00;
 const IN_N: u64 = 0x01;
@@ -61,25 +66,29 @@ const JLE: u64 = 0x13;
 const JLS: u64 = 0x14;
 
 const REG_NUM: usize = 8;
-const INS_MEM_CAP: usize = 50000;
+const MEM_CAP: usize = 50000;
+const VAR_MEM_TOP: usize = 50000;
+const VAR_MEM_BOTTOM: usize = 40001;
+const STACK_MEM_TOP: usize = 40000;
+const STACK_MEM_BOTTOM: usize = 30001;
 
 pub struct Vm {
     ip: usize,
     sp: usize,
     acc: u64,
     reg: [u64; REG_NUM],
-    ins_mem: [u64; INS_MEM_CAP],
+    mem: [u64; MEM_CAP],
 }
 
 impl Vm {
     pub fn new() -> Box<Vm> {
         Box::new(Vm {
-                     ip: 0,
-                     sp: 0,
-                     acc: 0,
-                     reg: [0; REG_NUM],
-                     ins_mem: [0; INS_MEM_CAP],
-                 })
+            ip: 0,
+            sp: STACK_MEM_TOP,
+            acc: 0,
+            reg: [0; REG_NUM],
+            mem: [0; MEM_CAP],
+        })
     }
 
     pub fn load_code(&mut self, code: Vec<String>) {
@@ -116,7 +125,7 @@ impl Vm {
 
     pub fn execute(&mut self) {
         loop {
-            let inst = self.ins_mem[self.ip];
+            let inst = self.mem[self.ip];
             let opcode = inst.rotate_left(INST_ROTATION) & INST_MASK;
 
             match opcode {
@@ -157,9 +166,9 @@ impl Vm {
 
     fn process_in_n(&mut self) {
         let mut input_text = String::new();
-        stdin()
-            .read_line(&mut input_text)
-            .expect("failed to read from stdin");
+        stdin().read_line(&mut input_text).expect(
+            "failed to read from stdin",
+        );
 
         let trimmed = input_text.trim();
         match trimmed.parse::<f64>() {
@@ -224,26 +233,65 @@ impl Vm {
     fn process_con(&mut self) {}
 
     fn process_push(&mut self) {
+        //check if stack is full
+        if self.sp <= STACK_MEM_BOTTOM {
+            self.set_mem_error_flag("Push attempt on full stack.");
+            return;
+        }
+
         let reg_index = self.get_register_index();
+        let mut value: u64;
 
         // register push
-        if reg_index <= 7 {
-            let value = self.reg[reg_index];
-
-            // ip push
-        } else if reg_index == 8 {
-            // sp push
-        } else if reg_index == 9 {
-            // acc push
-        } else if reg_index == 10 {
-            // error
+        if reg_index < REG_NUM {
+            value = self.reg[reg_index];
+        // ip push
+        } else if reg_index == IP_INDEX {
+            value = self.ip as u64;
+        // sp push
+        } else if reg_index == SP_INDEX {
+            value = self.sp as u64;
+        // acc push
+        } else if reg_index == ACC_INDEX {
+            value = self.acc;
+        // error
         } else {
-
+            self.set_mem_error_flag("Push attempt on unknown register.");
+            return;
         }
+
+        self.mem[self.sp] = value;
+        self.sp = self.sp - 1;
     }
 
     fn process_pop(&mut self) {
+        //check if stack is empty
+        if self.sp > STACK_MEM_TOP {
+            self.set_mem_error_flag("Pop attempt on empty stack.");
+            return;
+        }
+
         let reg_index = self.get_register_index();
+        let value = self.mem[self.sp];
+        self.sp = self.sp + 1;
+
+        // register pop
+        if reg_index < REG_NUM {
+            self.reg[reg_index] = value;
+        // ip pop
+        } else if reg_index == IP_INDEX {
+            self.ip = value as usize;
+        // sp pop
+        } else if reg_index == SP_INDEX {
+            self.sp = value as usize;
+        // acc pop
+        } else if reg_index == ACC_INDEX {
+            self.acc = value;
+        // error
+        } else {
+            self.set_mem_error_flag("Pop attempt on unknown register.");
+            return;
+        }
     }
 
     fn process_ld(&mut self) {
@@ -272,6 +320,10 @@ impl Vm {
         println!("IO error flag set!")
     }
 
+    fn set_mem_error_flag(&mut self, error: &'static str) {
+        println!("{}", error)
+    }
+
     fn has_errors(&mut self) -> bool {
         false
     }
@@ -281,14 +333,14 @@ impl Vm {
     }
 
     fn get_operand(&mut self, rotation: u32) -> f64 {
-        let inst = self.ins_mem[self.ip];
+        let inst = self.mem[self.ip];
         let operand_reg = (inst.rotate_left(rotation) & REG_MASK) as usize;
 
         unsafe { transmute::<u64, f64>(self.reg[operand_reg]) }
     }
 
     fn get_register_index(&mut self) -> usize {
-        let inst = self.ins_mem[self.ip];
+        let inst = self.mem[self.ip];
         let reg_index = (inst.rotate_left(FULL_REG_ROTATION) & FULL_REG_MASK) as usize;
 
         reg_index
