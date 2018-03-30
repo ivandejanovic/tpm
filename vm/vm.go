@@ -27,6 +27,7 @@ package vm
 import (
 	"fmt"
 	"github.com/ivandejanovic/tpm/common"
+	"math"
 	"math/bits"
 )
 
@@ -54,36 +55,36 @@ const (
 
 // Opcodes
 const (
-	HALT  uint64 = 0x00
-	IN_N  uint64 = 0x01
-	OUT_N uint64 = 0x02
-	IN_S  uint64 = 0x03
-	OUT_S uint64 = 0x04
-	ADD   uint64 = 0x05
-	SUB   uint64 = 0x06
-	MUL   uint64 = 0x07
-	DIV   uint64 = 0x08
-	CON   uint64 = 0x09
-	PUSH  uint64 = 0x0A
-	POP   uint64 = 0x0B
-	LD    uint64 = 0x0C
-	ST    uint64 = 0x0D
-	JMP   uint64 = 0x0E
-	JGR   uint64 = 0x0F
-	JGE   uint64 = 0x10
-	JEQ   uint64 = 0x11
-	JNE   uint64 = 0x12
-	JLE   uint64 = 0x13
-	JLS   uint64 = 0x14
+	HALT  uint = 0x00
+	IN_N  uint = 0x01
+	OUT_N uint = 0x02
+	IN_S  uint = 0x03
+	OUT_S uint = 0x04
+	ADD   uint = 0x05
+	SUB   uint = 0x06
+	MUL   uint = 0x07
+	DIV   uint = 0x08
+	CON   uint = 0x09
+	PUSH  uint = 0x0A
+	POP   uint = 0x0B
+	LD    uint = 0x0C
+	ST    uint = 0x0D
+	JMP   uint = 0x0E
+	JGR   uint = 0x0F
+	JGE   uint = 0x10
+	JEQ   uint = 0x11
+	JNE   uint = 0x12
+	JLE   uint = 0x13
+	JLS   uint = 0x14
 )
 
 const (
-	REG_NUM          uint = 8
-	MEM_CAP          uint = 50000
-	VAR_MEM_TOP      uint = 50000
-	VAR_MEM_BOTTOM   uint = 40001
-	STACK_MEM_TOP    uint = 40000
-	STACK_MEM_BOTTOM uint = 30001
+	REG_NUM          uint   = 8
+	MEM_CAP          uint64 = 50000
+	VAR_MEM_TOP      uint64 = 50000
+	VAR_MEM_BOTTOM   uint64 = 40001
+	STACK_MEM_TOP    uint64 = 40000
+	STACK_MEM_BOTTOM uint64 = 30001
 )
 
 type vm struct {
@@ -103,7 +104,7 @@ func Execute(code []string) {
 
 func (vm *vm) load(code []string) {
 	//Create and initialize op codes map
-	opCodes := make(map[uint64]string)
+	opCodes := make(map[uint]string)
 
 	opCodes[HALT] = common.HALT
 	opCodes[IN_N] = common.IN_N
@@ -135,7 +136,7 @@ func (vm *vm) load(code []string) {
 func (vm *vm) execute() {
 	for {
 		inst := vm.mem[vm.ip]
-		opcode := bits.RotateLeft64(inst, INST_ROTATION) & INST_MASK
+		opcode := uint(bits.RotateLeft64(inst, INST_ROTATION) & INST_MASK)
 
 		switch opcode {
 		case HALT:
@@ -193,25 +194,21 @@ func (vm *vm) execute() {
 }
 
 func (vm *vm) processInN() {
-	//let mut input_text = String::new();
-	//        stdin().read_line(&mut input_text).expect(
-	//            "failed to read from stdin",
-	//        );
-	//
-	//        let trimmed = input_text.trim();
-	//        match trimmed.parse::<f64>() {
-	//            Ok(i) => {
-	//                self.acc = unsafe { transmute::<f64, u64>(i) };
-	//                self.ip = self.ip + 1;
-	//            }
-	//            Err(..) => self.set_io_error_flag(),
-	//        };
+	var input float64 = 0.0
+	_, err := fmt.Scanf("%f", &input)
+	if err != nil {
+		fmt.Println("")
+		vm.setIOErrorFlag()
+		return
+	}
+	vm.acc = math.Float64bits(input)
+	vm.ip = vm.ip + 1
 }
 
 func (vm *vm) processOutN() {
-	//let output = unsafe { transmute::<u64, f64>(self.acc) };
-	//        println!("{}", output);
-	//        self.ip = self.ip + 1;
+	output := math.Float64frombits(vm.acc)
+	fmt.Println(output)
+	vm.ip = vm.ip + 1
 }
 
 func (vm *vm) processInS() {
@@ -223,43 +220,35 @@ func (vm *vm) processOutS() {
 }
 
 func (vm *vm) processAdd() {
-	//let operand1 = self.get_operand(OPERAND_ONE_ROTATION);
-	//        let operand2 = self.get_operand(OPERANT_TWO_ROTATION);
-	//
-	//        let result = operand1 + operand2;
-	//
-	//        self.acc = unsafe { transmute::<f64, u64>(result) };
-	//        self.ip = self.ip + 1;
+	operand1 := vm.getOperand(OPERAND_ONE_ROTATION)
+	operand2 := vm.getOperand(OPERAND_TWO_ROTATION)
+	result := operand1 + operand2
+	vm.acc = math.Float64bits(result)
+	vm.ip = vm.ip + 1
 }
 
 func (vm *vm) processSub() {
-	//let operand1 = self.get_operand(OPERAND_ONE_ROTATION);
-	//        let operand2 = self.get_operand(OPERANT_TWO_ROTATION);
-	//
-	//        let result = operand1 - operand2;
-	//
-	//        self.acc = unsafe { transmute::<f64, u64>(result) };
-	//        self.ip = self.ip + 1;
+	operand1 := vm.getOperand(OPERAND_ONE_ROTATION)
+	operand2 := vm.getOperand(OPERAND_TWO_ROTATION)
+	result := operand1 - operand2
+	vm.acc = math.Float64bits(result)
+	vm.ip = vm.ip + 1
 }
 
 func (vm *vm) processMul() {
-	//let operand1 = self.get_operand(OPERAND_ONE_ROTATION);
-	//        let operand2 = self.get_operand(OPERANT_TWO_ROTATION);
-	//
-	//        let result = operand1 * operand2;
-	//
-	//        self.acc = unsafe { transmute::<f64, u64>(result) };
-	//        self.ip = self.ip + 1;
+	operand1 := vm.getOperand(OPERAND_ONE_ROTATION)
+	operand2 := vm.getOperand(OPERAND_TWO_ROTATION)
+	result := operand1 * operand2
+	vm.acc = math.Float64bits(result)
+	vm.ip = vm.ip + 1
 }
 
 func (vm *vm) processDiv() {
-	//let operand1 = self.get_operand(OPERAND_ONE_ROTATION);
-	//        let operand2 = self.get_operand(OPERANT_TWO_ROTATION);
-	//
-	//        let result = operand1 / operand2;
-	//
-	//        self.acc = unsafe { transmute::<f64, u64>(result) };
-	//        self.ip = self.ip + 1;
+	operand1 := vm.getOperand(OPERAND_ONE_ROTATION)
+	operand2 := vm.getOperand(OPERAND_TWO_ROTATION)
+	result := operand1 / operand2
+	vm.acc = math.Float64bits(result)
+	vm.ip = vm.ip + 1
 }
 
 func (vm *vm) processCon() {
@@ -267,73 +256,64 @@ func (vm *vm) processCon() {
 }
 
 func (vm *vm) processPush() {
-	//check if stack is full
-	//        if self.sp <= STACK_MEM_BOTTOM {
-	//            self.set_mem_error_flag("Push attempt on full stack.");
-	//            return;
-	//        }
-	//
-	//        let reg_index = self.get_register_index();
-	//        let mut value: u64;
-	//
-	//        // register push
-	//        if reg_index < REG_NUM {
-	//            value = self.reg[reg_index];
-	//        // ip push
-	//        } else if reg_index == IP_INDEX {
-	//            value = self.ip as u64;
-	//        // sp push
-	//        } else if reg_index == SP_INDEX {
-	//            value = self.sp as u64;
-	//        // acc push
-	//        } else if reg_index == ACC_INDEX {
-	//            value = self.acc;
-	//        // error
-	//        } else {
-	//            self.set_mem_error_flag("Push attempt on unknown register.");
-	//            return;
-	//        }
-	//
-	//        self.mem[self.sp] = value;
-	//        self.sp = self.sp - 1;
+	//Check if stack is full
+	if vm.sp <= STACK_MEM_BOTTOM {
+		vm.setMemErrorFlags("Push attempt on full stack.")
+		return
+	}
+
+	regIndex := vm.getRegisterIndex()
+	var value uint64 = 0
+
+	if regIndex < REG_NUM {
+		value = vm.reg[regIndex]
+	} else if regIndex == IP_INDEX {
+		value = uint64(vm.ip)
+
+	} else if regIndex == SP_INDEX {
+		value = uint64(vm.sp)
+	} else if regIndex == ACC_INDEX {
+		value = vm.acc
+	} else {
+		vm.setMemErrorFlags("Push attempt on unkown register.")
+		return
+	}
+
+	vm.mem[vm.sp] = value
+	vm.sp = vm.sp - 1
 }
 
 func (vm *vm) processPop() {
-	//check if stack is empty
-	//        if self.sp > STACK_MEM_TOP {
-	//            self.set_mem_error_flag("Pop attempt on empty stack.");
-	//            return;
-	//        }
-	//
-	//        let reg_index = self.get_register_index();
-	//        let value = self.mem[self.sp];
-	//        self.sp = self.sp + 1;
-	//
-	//        // register pop
-	//        if reg_index < REG_NUM {
-	//            self.reg[reg_index] = value;
-	//        // ip pop
-	//        } else if reg_index == IP_INDEX {
-	//            self.ip = value as usize;
-	//        // sp pop
-	//        } else if reg_index == SP_INDEX {
-	//            self.sp = value as usize;
-	//        // acc pop
-	//        } else if reg_index == ACC_INDEX {
-	//            self.acc = value;
-	//        // error
-	//        } else {
-	//            self.set_mem_error_flag("Pop attempt on unknown register.");
-	//            return;
-	//        }
+	//Check if stack is empty
+	if vm.sp > STACK_MEM_TOP {
+		vm.setMemErrorFlags("Pop attempt on empty stack.")
+		return
+	}
+
+	regIndex := vm.getRegisterIndex()
+	value := vm.mem[vm.sp]
+	vm.sp = vm.sp + 1
+
+	if regIndex < REG_NUM {
+		vm.reg[regIndex] = value
+	} else if regIndex == IP_INDEX {
+		vm.ip = value
+	} else if regIndex == SP_INDEX {
+		vm.sp = value
+	} else if regIndex == ACC_INDEX {
+		vm.acc = value
+	} else {
+		vm.setMemErrorFlags("Pop attempt on unkown register.")
+		return
+	}
 }
 
 func (vm *vm) processLd() {
-	//let reg_index = self.get_register_index();
+	//regIndex := vm.getRegisterIndex()
 }
 
 func (vm *vm) processSt() {
-	//let reg_index = self.get_register_index();
+	//regIndex := vm.getRegisterIndex()
 }
 
 func (vm *vm) processJmp() {
@@ -380,20 +360,17 @@ func (vm *vm) throwException() {
 	fmt.Println("Exception thrown!")
 }
 
-func (vm *vm) getOperand(rotation uint32) float64 {
-	//        let inst = self.mem[self.ip];
-	//        let operand_reg = (inst.rotate_left(rotation) & REG_MASK) as usize;
-	//
-	//        unsafe { transmute::<u64, f64>(self.reg[operand_reg]) }
+func (vm *vm) getOperand(rotation int) float64 {
+	inst := vm.mem[vm.ip]
+	operandReg := bits.RotateLeft64(inst, rotation) & REG_MASK
+	operand := math.Float64frombits(operandReg)
 
-	return 0.0
+	return operand
 }
 
 func (vm *vm) getRegisterIndex() uint {
-	//        let inst = self.mem[self.ip];
-	//        let reg_index = (inst.rotate_left(FULL_REG_ROTATION) & FULL_REG_MASK) as usize;
-	//
-	//        reg_index
+	inst := vm.mem[vm.ip]
+	regIndex := uint(bits.RotateLeft64(inst, FULL_REG_ROTATION) & FULL_REG_MASK)
 
-	return 0
+	return regIndex
 }
