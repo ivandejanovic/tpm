@@ -16,9 +16,9 @@ copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+AUTHORS OR COPYRIGHT HOopLdERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF opConTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN opConNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
@@ -33,66 +33,66 @@ import (
 
 // Bit Masks
 const (
-	INST_MASK     uint64 = 0xFF
-	REG_MASK      uint64 = 0xF
-	FULL_REG_MASK uint64 = 0x1F
+	instMask    uint64 = 0xFF
+	regMask     uint64 = 0xF
+	fullRegMask uint64 = 0x1F
 )
 
 //Rotation values
 const (
-	INST_ROTATION        int = 8
-	OPERAND_ONE_ROTATION int = 12
-	OPERAND_TWO_ROTATION int = 15
-	FULL_REG_ROTATION    int = 13
+	instRotation       int = 8
+	operandOneRotation int = 12
+	operandTwoRotation int = 15
+	fullRegRotation    int = 13
 )
 
 //Register index
 const (
-	IP_INDEX  uint = 8
-	SP_INDEX  uint = 9
-	ACC_INDEX uint = 10
+	ipIndex  uint = 8
+	spIndex  uint = 9
+	accIndex uint = 10
 )
 
 // Opcodes
 const (
-	HALT  uint = 0x00
-	IN_N  uint = 0x01
-	OUT_N uint = 0x02
-	IN_S  uint = 0x03
-	OUT_S uint = 0x04
-	ADD   uint = 0x05
-	SUB   uint = 0x06
-	MUL   uint = 0x07
-	DIV   uint = 0x08
-	CON   uint = 0x09
-	PUSH  uint = 0x0A
-	POP   uint = 0x0B
-	LD    uint = 0x0C
-	ST    uint = 0x0D
-	JMP   uint = 0x0E
-	JGR   uint = 0x0F
-	JGE   uint = 0x10
-	JEQ   uint = 0x11
-	JNE   uint = 0x12
-	JLE   uint = 0x13
-	JLS   uint = 0x14
+	opHalt uint = 0x00
+	opInN  uint = 0x01
+	opOutN uint = 0x02
+	opInS  uint = 0x03
+	opOutS uint = 0x04
+	opAdd  uint = 0x05
+	opSub  uint = 0x06
+	opMul  uint = 0x07
+	opDiv  uint = 0x08
+	opCon  uint = 0x09
+	opPush uint = 0x0A
+	opPop  uint = 0x0B
+	opLd   uint = 0x0C
+	opSt   uint = 0x0D
+	opJmp  uint = 0x0E
+	opJgr  uint = 0x0F
+	opJge  uint = 0x10
+	opJeq  uint = 0x11
+	opJne  uint = 0x12
+	opJle  uint = 0x13
+	opJls  uint = 0x14
 )
 
 const (
-	REG_NUM          uint   = 8
-	MEM_CAP          uint64 = 50000
-	VAR_MEM_TOP      uint64 = 50000
-	VAR_MEM_BOTTOM   uint64 = 40001
-	STACK_MEM_TOP    uint64 = 40000
-	STACK_MEM_BOTTOM uint64 = 30001
+	regNum         uint   = 8
+	memCap         uint64 = 50000
+	varMemTop      uint64 = 50000
+	varMemBottom   uint64 = 40001
+	stackMemTop    uint64 = 40000
+	stackMemBottom uint64 = 30001
 )
 
 type vm struct {
 	ip  uint64
 	sp  uint64
 	acc uint64
-	reg [REG_NUM]uint64
-	mem [MEM_CAP]uint64
+	reg [regNum]uint64
+	mem [memCap]uint64
 }
 
 func Execute(code []string) {
@@ -106,27 +106,27 @@ func (vm *vm) load(code []string) {
 	//Create and initialize op codes map
 	opCodes := make(map[uint]string)
 
-	opCodes[HALT] = common.HALT
-	opCodes[IN_N] = common.IN_N
-	opCodes[OUT_N] = common.OUT_N
-	opCodes[IN_S] = common.IN_S
-	opCodes[OUT_S] = common.OUT_S
-	opCodes[ADD] = common.ADD
-	opCodes[SUB] = common.SUB
-	opCodes[MUL] = common.MUL
-	opCodes[DIV] = common.DIV
-	opCodes[CON] = common.CON
-	opCodes[PUSH] = common.PUSH
-	opCodes[POP] = common.POP
-	opCodes[LD] = common.LD
-	opCodes[ST] = common.ST
-	opCodes[JMP] = common.JMP
-	opCodes[JGR] = common.JGR
-	opCodes[JGE] = common.JGE
-	opCodes[JEQ] = common.JEQ
-	opCodes[JNE] = common.JNE
-	opCodes[JLE] = common.JLE
-	opCodes[JLS] = common.JLS
+	opCodes[opHalt] = common.HALT
+	opCodes[opInN] = common.IN_N
+	opCodes[opOutN] = common.OUT_N
+	opCodes[opInS] = common.IN_S
+	opCodes[opOutS] = common.OUT_S
+	opCodes[opAdd] = common.ADD
+	opCodes[opSub] = common.SUB
+	opCodes[opMul] = common.MUL
+	opCodes[opDiv] = common.DIV
+	opCodes[opCon] = common.CON
+	opCodes[opPush] = common.PUSH
+	opCodes[opPop] = common.POP
+	opCodes[opLd] = common.LD
+	opCodes[opSt] = common.ST
+	opCodes[opJmp] = common.JMP
+	opCodes[opJgr] = common.JGR
+	opCodes[opJge] = common.JGE
+	opCodes[opJeq] = common.JEQ
+	opCodes[opJne] = common.JNE
+	opCodes[opJle] = common.JLE
+	opCodes[opJls] = common.JLS
 
 	for _, inst := range code {
 		fmt.Println(inst)
@@ -136,50 +136,50 @@ func (vm *vm) load(code []string) {
 func (vm *vm) execute() {
 	for {
 		inst := vm.mem[vm.ip]
-		opcode := uint(bits.RotateLeft64(inst, INST_ROTATION) & INST_MASK)
+		opcode := uint(bits.RotateLeft64(inst, instRotation) & instMask)
 
 		switch opcode {
-		case HALT:
+		case opHalt:
 			break
-		case IN_N:
+		case opInN:
 			vm.processInN()
-		case OUT_N:
+		case opOutN:
 			vm.processOutN()
-		case IN_S:
+		case opInS:
 			vm.processInS()
-		case OUT_S:
+		case opOutS:
 			vm.processOutS()
-		case ADD:
+		case opAdd:
 			vm.processAdd()
-		case SUB:
+		case opSub:
 			vm.processSub()
-		case MUL:
+		case opMul:
 			vm.processMul()
-		case DIV:
+		case opDiv:
 			vm.processDiv()
-		case CON:
+		case opCon:
 			vm.processCon()
-		case PUSH:
+		case opPush:
 			vm.processPush()
-		case POP:
+		case opPop:
 			vm.processPop()
-		case LD:
+		case opLd:
 			vm.processLd()
-		case ST:
+		case opSt:
 			vm.processSt()
-		case JMP:
+		case opJmp:
 			vm.processJmp()
-		case JGR:
+		case opJgr:
 			vm.processJgr()
-		case JGE:
+		case opJge:
 			vm.processJge()
-		case JEQ:
+		case opJeq:
 			vm.processJeq()
-		case JNE:
+		case opJne:
 			vm.processJne()
-		case JLE:
+		case opJle:
 			vm.processJle()
-		case JLS:
+		case opJls:
 			vm.processJls()
 		default:
 			fmt.Println("Unknow instruction. Aborting.")
@@ -220,32 +220,32 @@ func (vm *vm) processOutS() {
 }
 
 func (vm *vm) processAdd() {
-	operand1 := vm.getOperand(OPERAND_ONE_ROTATION)
-	operand2 := vm.getOperand(OPERAND_TWO_ROTATION)
+	operand1 := vm.getOperand(operandOneRotation)
+	operand2 := vm.getOperand(operandTwoRotation)
 	result := operand1 + operand2
 	vm.acc = math.Float64bits(result)
 	vm.ip = vm.ip + 1
 }
 
 func (vm *vm) processSub() {
-	operand1 := vm.getOperand(OPERAND_ONE_ROTATION)
-	operand2 := vm.getOperand(OPERAND_TWO_ROTATION)
+	operand1 := vm.getOperand(operandOneRotation)
+	operand2 := vm.getOperand(operandTwoRotation)
 	result := operand1 - operand2
 	vm.acc = math.Float64bits(result)
 	vm.ip = vm.ip + 1
 }
 
 func (vm *vm) processMul() {
-	operand1 := vm.getOperand(OPERAND_ONE_ROTATION)
-	operand2 := vm.getOperand(OPERAND_TWO_ROTATION)
+	operand1 := vm.getOperand(operandOneRotation)
+	operand2 := vm.getOperand(operandTwoRotation)
 	result := operand1 * operand2
 	vm.acc = math.Float64bits(result)
 	vm.ip = vm.ip + 1
 }
 
 func (vm *vm) processDiv() {
-	operand1 := vm.getOperand(OPERAND_ONE_ROTATION)
-	operand2 := vm.getOperand(OPERAND_TWO_ROTATION)
+	operand1 := vm.getOperand(operandOneRotation)
+	operand2 := vm.getOperand(operandTwoRotation)
 	result := operand1 / operand2
 	vm.acc = math.Float64bits(result)
 	vm.ip = vm.ip + 1
@@ -257,7 +257,7 @@ func (vm *vm) processCon() {
 
 func (vm *vm) processPush() {
 	//Check if stack is full
-	if vm.sp <= STACK_MEM_BOTTOM {
+	if vm.sp <= stackMemBottom {
 		vm.setMemErrorFlags("Push attempt on full stack.")
 		return
 	}
@@ -265,14 +265,14 @@ func (vm *vm) processPush() {
 	regIndex := vm.getRegisterIndex()
 	var value uint64 = 0
 
-	if regIndex < REG_NUM {
+	if regIndex < regNum {
 		value = vm.reg[regIndex]
-	} else if regIndex == IP_INDEX {
+	} else if regIndex == ipIndex {
 		value = uint64(vm.ip)
 
-	} else if regIndex == SP_INDEX {
+	} else if regIndex == spIndex {
 		value = uint64(vm.sp)
-	} else if regIndex == ACC_INDEX {
+	} else if regIndex == accIndex {
 		value = vm.acc
 	} else {
 		vm.setMemErrorFlags("Push attempt on unkown register.")
@@ -285,7 +285,7 @@ func (vm *vm) processPush() {
 
 func (vm *vm) processPop() {
 	//Check if stack is empty
-	if vm.sp > STACK_MEM_TOP {
+	if vm.sp > stackMemTop {
 		vm.setMemErrorFlags("Pop attempt on empty stack.")
 		return
 	}
@@ -294,13 +294,13 @@ func (vm *vm) processPop() {
 	value := vm.mem[vm.sp]
 	vm.sp = vm.sp + 1
 
-	if regIndex < REG_NUM {
+	if regIndex < regNum {
 		vm.reg[regIndex] = value
-	} else if regIndex == IP_INDEX {
+	} else if regIndex == ipIndex {
 		vm.ip = value
-	} else if regIndex == SP_INDEX {
+	} else if regIndex == spIndex {
 		vm.sp = value
-	} else if regIndex == ACC_INDEX {
+	} else if regIndex == accIndex {
 		vm.acc = value
 	} else {
 		vm.setMemErrorFlags("Pop attempt on unkown register.")
@@ -362,7 +362,7 @@ func (vm *vm) throwException() {
 
 func (vm *vm) getOperand(rotation int) float64 {
 	inst := vm.mem[vm.ip]
-	operandReg := bits.RotateLeft64(inst, rotation) & REG_MASK
+	operandReg := bits.RotateLeft64(inst, rotation) & regMask
 	operand := math.Float64frombits(operandReg)
 
 	return operand
@@ -370,7 +370,7 @@ func (vm *vm) getOperand(rotation int) float64 {
 
 func (vm *vm) getRegisterIndex() uint {
 	inst := vm.mem[vm.ip]
-	regIndex := uint(bits.RotateLeft64(inst, FULL_REG_ROTATION) & FULL_REG_MASK)
+	regIndex := uint(bits.RotateLeft64(inst, fullRegRotation) & fullRegMask)
 
 	return regIndex
 }
