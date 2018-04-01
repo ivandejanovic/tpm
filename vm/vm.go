@@ -106,27 +106,27 @@ func (vm *vm) load(code []string) {
 	//Create and initialize op codes map
 	opCodes := make(map[uint]string)
 
-	opCodes[opHalt] = common.HALT
-	opCodes[opInN] = common.IN_N
-	opCodes[opOutN] = common.OUT_N
-	opCodes[opInS] = common.IN_S
-	opCodes[opOutS] = common.OUT_S
-	opCodes[opAdd] = common.ADD
-	opCodes[opSub] = common.SUB
-	opCodes[opMul] = common.MUL
-	opCodes[opDiv] = common.DIV
-	opCodes[opCon] = common.CON
-	opCodes[opPush] = common.PUSH
-	opCodes[opPop] = common.POP
-	opCodes[opLd] = common.LD
-	opCodes[opSt] = common.ST
-	opCodes[opJmp] = common.JMP
-	opCodes[opJgr] = common.JGR
-	opCodes[opJge] = common.JGE
-	opCodes[opJeq] = common.JEQ
-	opCodes[opJne] = common.JNE
-	opCodes[opJle] = common.JLE
-	opCodes[opJls] = common.JLS
+	opCodes[opHalt] = common.Halt
+	opCodes[opInN] = common.InN
+	opCodes[opOutN] = common.OutN
+	opCodes[opInS] = common.InS
+	opCodes[opOutS] = common.OutS
+	opCodes[opAdd] = common.Add
+	opCodes[opSub] = common.Sub
+	opCodes[opMul] = common.Mul
+	opCodes[opDiv] = common.Div
+	opCodes[opCon] = common.Con
+	opCodes[opPush] = common.Push
+	opCodes[opPop] = common.Pop
+	opCodes[opLd] = common.Ld
+	opCodes[opSt] = common.St
+	opCodes[opJmp] = common.Jmp
+	opCodes[opJgr] = common.Jgr
+	opCodes[opJge] = common.Jge
+	opCodes[opJeq] = common.Jeq
+	opCodes[opJne] = common.Jne
+	opCodes[opJle] = common.Jle
+	opCodes[opJls] = common.Jls
 
 	for _, inst := range code {
 		fmt.Println(inst)
