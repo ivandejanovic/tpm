@@ -1,0 +1,6 @@
+[package]
+name = "tpm"
+version = "0.1.0"
+authors = ["ivandejanovic <idejanovic@gmail.com>"]
+
+[dependencies]
