@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016-2017 Ivan Dejanovic
+// Copyright (c) 2016-2020 Ivan Dejanovic
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,7 +19,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-
 
 mod common;
 mod compiler;
@@ -67,7 +66,6 @@ pub fn tpm() {
                 }
                 Err(e) => println!("{}", e),
             }
-
         }
         None => invalid_usage_msg(),
     }
@@ -79,8 +77,7 @@ fn handle_flags(args: Args) -> bool {
 
         if arg.starts_with(MINUS) {
             match arg {
-                VERSION_FLAG_SHORT |
-                VERSION_FLAG_LONG => println!("{}", VERSION_MESSAGE),
+                VERSION_FLAG_SHORT | VERSION_FLAG_LONG => println!("{}", VERSION_MESSAGE),
                 HELP_FLAG_SHORT | HELP_FLAG_LONG => println!("{}", HELP_MESSAGE),
                 _ => invalid_usage_msg(),
             }

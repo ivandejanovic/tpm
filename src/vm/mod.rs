@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016-2017 Ivan Dejanovic
+// Copyright (c) 2016-2020 Ivan Dejanovic
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-use std::io::stdin;
 use std::collections::HashMap;
+use std::io::stdin;
 use std::mem::transmute;
 
 use common::INSTRUCTIONS;
@@ -34,7 +34,7 @@ const FULL_REG_MASK: u64 = 0x1F;
 //Rotation values
 const INST_ROTATION: u32 = 8;
 const OPERAND_ONE_ROTATION: u32 = 12;
-const OPERANT_TWO_ROTATION: u32 = 15;
+const OPERAND_TWO_ROTATION: u32 = 15;
 const FULL_REG_ROTATION: u32 = 13;
 
 //Register index
@@ -151,10 +151,9 @@ impl Vm {
                 JLE => self.process_jle(),
                 JLS => self.process_jls(),
                 _ => {
-                    println!("Unknow instruction. Aborting.");
+                    println!("Unknown instruction. Aborting.");
                     break;
                 }
-
             }
 
             if self.has_errors() {
@@ -166,9 +165,9 @@ impl Vm {
 
     fn process_in_n(&mut self) {
         let mut input_text = String::new();
-        stdin().read_line(&mut input_text).expect(
-            "failed to read from stdin",
-        );
+        stdin()
+            .read_line(&mut input_text)
+            .expect("failed to read from stdin");
 
         let trimmed = input_text.trim();
         match trimmed.parse::<f64>() {
@@ -192,7 +191,7 @@ impl Vm {
 
     fn process_add(&mut self) {
         let operand1 = self.get_operand(OPERAND_ONE_ROTATION);
-        let operand2 = self.get_operand(OPERANT_TWO_ROTATION);
+        let operand2 = self.get_operand(OPERAND_TWO_ROTATION);
 
         let result = operand1 + operand2;
 
@@ -202,7 +201,7 @@ impl Vm {
 
     fn process_sub(&mut self) {
         let operand1 = self.get_operand(OPERAND_ONE_ROTATION);
-        let operand2 = self.get_operand(OPERANT_TWO_ROTATION);
+        let operand2 = self.get_operand(OPERAND_TWO_ROTATION);
 
         let result = operand1 - operand2;
 
@@ -212,7 +211,7 @@ impl Vm {
 
     fn process_mul(&mut self) {
         let operand1 = self.get_operand(OPERAND_ONE_ROTATION);
-        let operand2 = self.get_operand(OPERANT_TWO_ROTATION);
+        let operand2 = self.get_operand(OPERAND_TWO_ROTATION);
 
         let result = operand1 * operand2;
 
@@ -222,7 +221,7 @@ impl Vm {
 
     fn process_div(&mut self) {
         let operand1 = self.get_operand(OPERAND_ONE_ROTATION);
-        let operand2 = self.get_operand(OPERANT_TWO_ROTATION);
+        let operand2 = self.get_operand(OPERAND_TWO_ROTATION);
 
         let result = operand1 / operand2;
 
