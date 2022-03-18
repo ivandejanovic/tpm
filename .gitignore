@@ -1,5 +1,5 @@
-target
+bin
+pkg
 .settings
 .project
-Cargo.lock
 .idea
