@@ -1,5 +1,1 @@
-bin
-pkg
-.settings
-.project
-.idea
+target
