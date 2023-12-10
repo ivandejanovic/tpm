@@ -1,5 +1,5 @@
-target
 .settings
 .project
-Cargo.lock
 .idea
+.vscode
+
