@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2016-2023 Ivan Dejanovic
+Copyright (c) 2016-2024 Ivan Dejanovic
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ const (
 	fullRegMask uint64 = 0x1F
 )
 
-//Rotation values
+// Rotation values
 const (
 	instRotation       int = 8
 	operandOneRotation int = 12
@@ -46,7 +46,7 @@ const (
 	fullRegRotation    int = 13
 )
 
-//Register index
+// Register index
 const (
 	ipIndex  uint = 8
 	spIndex  uint = 9
